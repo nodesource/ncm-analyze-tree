@@ -78,8 +78,8 @@ const readNodeModules = async dir => {
 
 const fetchData = async ({ pkgs, token }) => {
   const query = `{
-    ${[...pkgs].map(pkg => `
-      pkg${Math.random().toString(16).slice(2)}: package(name: "${pkg.name}") {
+    ${[...pkgs].map((pkg, i) => `
+      pkg${i}: package(name: "${pkg.name}") {
         name
         versions(version: "${pkg.version}") {
           version
