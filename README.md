@@ -6,6 +6,8 @@ This process is optimized by trying to get all the necessary information from
 a `package-lock.json` or `yarn.lock` file, and a full scan of `node_modules/**`
 is only reverted to if no lock file exists.
 
+[![Build Status](http://badges.control-tower.nodesource.io/ncm-analyze-tree/status.svg)](https://us-west-2.console.aws.amazon.com/codebuild/home?region=us-west-2#/projects/ncm-analyze-tree-ci/view)
+
 ## Usage
 
 Print certification data for this module's dependency tree:
