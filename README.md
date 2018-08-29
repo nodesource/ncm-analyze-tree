@@ -51,6 +51,31 @@ Set {
   name: 'es-to-primitive' },
 ```
 
+The returned data is of this format:
+
+```
+{
+  name
+  version
+  score
+  results {
+    severity
+    pass
+    name
+    test
+    value
+  }
+  vulnerabilities {
+    id,
+    title,
+    semver {
+      vulnerable
+    },
+    severity
+  }
+}
+```
+
 ## Installation
 
 ```bash
