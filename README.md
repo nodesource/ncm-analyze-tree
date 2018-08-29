@@ -1,6 +1,7 @@
 # ncm-analyze-tree
 
 Get certification data for a module's dependency tree, as it is on disk.
+
 This process is optimized by trying to get all the necessary information from
 a `package-lock.json` or `yarn.lock` file, and a full scan of `node_modules/**`
 is only reverted to if no lock file exists.
