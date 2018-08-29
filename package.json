@@ -5,9 +5,10 @@
   "repository": "nodesource/ncm-analyze-tree",
   "description": "Get certification data for a module's dependency tree",
   "scripts": {
-    "test": "standard"
+    "test": "standard && check-deps"
   },
   "devDependencies": {
+    "@ns-private/check-deps": "^2.0.0",
     "node-fetch": "^2.2.0",
     "standard": "^11.0.1"
   },
