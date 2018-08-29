@@ -1,0 +1,19 @@
+{
+  "name": "@ns-private/ncm-analyze-tree",
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "repository": "nodesource/ncm-analyze-tree",
+  "description": "Get certification data for a module's dependency tree",
+  "scripts": {
+    "test": "standard"
+  },
+  "devDependencies": {
+    "node-fetch": "^2.2.0",
+    "standard": "^11.0.1"
+  },
+  "dependencies": {
+    "@ns-private/graphql": "^4.0.0",
+    "@yarnpkg/lockfile": "^1.0.2",
+    "read-package-tree": "^5.2.1"
+  }
+}
