@@ -5,6 +5,7 @@ const fs = require('fs')
 const { promisify } = require('util')
 const readPackageTree = require('read-package-tree')
 const lockfile = require('@yarnpkg/lockfile')
+const semver = require('semver')
 
 const analyze = async ({
   dir,
@@ -12,7 +13,7 @@ const analyze = async ({
   pageSize: pageSize = 50,
   concurrency: concurrency = 5
 }) => {
-  const pkgs = await getPkgs(dir)
+  const pkgs = filterPkgs(await getPkgs(dir))
   let data = new Set()
   const pages = splitSet(pkgs, pageSize)
   const batches = splitSet(pages, concurrency)
@@ -30,6 +31,14 @@ const getPkgs = async dir => {
   if (await exists(`${dir}/package-lock.json`)) return readPackageLock(dir)
   if (await exists(`${dir}/yarn.lock`)) return readYarnLock(dir)
   return readNodeModules(dir)
+}
+
+const filterPkgs = pkgs => {
+  const clean = new Set()
+  for (const pkg of pkgs) {
+    if (semver.valid(pkg.version)) clean.add(pkg)
+  }
+  return clean
 }
 
 const readPackageLock = async dir => {
