@@ -19,7 +19,12 @@ const main = async () => {
   })
   const token = res.headers.get('authorization').split(' ')[1]
 
-  const data = await fn({ dir, token })
+  const data = await fn({
+    dir,
+    token,
+    onPkgs: pkgs => console.log(`Analyzing ${pkgs.size} modules...`)
+  })
+
   console.log(data)
   console.log(`Fetched data for ${data.size} modules.`)
 }
