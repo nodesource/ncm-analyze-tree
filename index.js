@@ -12,9 +12,10 @@ const analyze = async ({
   token,
   pageSize: pageSize = 50,
   concurrency: concurrency = 5,
-  onPkgs: onPkgs = () => {}
+  onPkgs: onPkgs = () => {},
+  filter: filter = () => true
 }) => {
-  const pkgs = filterPkgs(await getPkgs(dir))
+  const pkgs = filterPkgs(await getPkgs(dir), filter)
   onPkgs(pkgs)
   let data = new Set()
   const pages = splitSet(pkgs, pageSize)
@@ -35,10 +36,12 @@ const getPkgs = async dir => {
   return readNodeModules(dir)
 }
 
-const filterPkgs = pkgs => {
+const filterPkgs = (pkgs, fn) => {
   const clean = new Set()
   for (const pkg of pkgs) {
-    if (semver.valid(pkg.version)) clean.add(pkg)
+    if (semver.valid(pkg.version) && fn(pkg)) {
+      clean.add(pkg)
+    }
   }
   return clean
 }

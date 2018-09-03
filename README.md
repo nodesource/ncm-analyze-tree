@@ -84,7 +84,9 @@ $ npm install @ns-private/ncm-analyze-tree
 
 ## API
 
-### analyze({ dir, token, onPkgs })
+### analyze({ dir, token, onPkgs, filter })
 
 - `onPkgs`: Called with a `Set` of package objects `{ name, version }`, once the
 tree has been read
+- `filter`: Called with every `pkg` object, return `false` to remove from
+analysis

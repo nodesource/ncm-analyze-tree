@@ -23,6 +23,7 @@ const main = async () => {
     dir,
     token,
     onPkgs: pkgs => console.log(`Analyzing ${pkgs.size} modules...`)
+    // filter: pkg => pkg.name[0] === 'e'
   })
 
   console.log(data)
