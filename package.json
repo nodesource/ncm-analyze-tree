@@ -1,6 +1,6 @@
 {
   "name": "@ns-private/ncm-analyze-tree",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "UNLICENSED",
   "repository": "nodesource/ncm-analyze-tree",
   "description": "Get certification data for a module's dependency tree",
