@@ -49,15 +49,19 @@ const filterPkgs = (pkgs, fn) => {
 const readPackageLock = async dir => {
   const buf = await promisify(fs.readFile)(`${dir}/package-lock.json`)
   const packageLock = JSON.parse(buf.toString())
-  const pkgs = new Set()
+
+  const map = new Map()
   const walk = obj => {
     if (!obj.dependencies) return
     for (const [name, value] of Object.entries(obj.dependencies)) {
-      pkgs.add({ name, version: value.version })
+      map.set(`${name}@${value.version}`, { name, version: value.version })
       walk(value)
     }
   }
   walk(packageLock)
+
+  const pkgs = new Set()
+  for (const [, pkg] of map) pkgs.add(pkg)
   return pkgs
 }
 
