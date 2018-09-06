@@ -26,7 +26,9 @@ const main = async () => {
     // filter: pkg => pkg.name[0] === 'e'
   })
 
-  console.log(data)
+  for (const pkg of data) {
+    console.log(`${pkg.name}@${pkg.version}`)
+  }
   console.log(`Fetched data for ${data.size} modules.`)
 }
 

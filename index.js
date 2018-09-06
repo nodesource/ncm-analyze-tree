@@ -80,10 +80,10 @@ const readYarnLock = async dir => {
 
 const readNodeModules = async dir => {
   const data = await promisify(readPackageTree)(dir)
-  const pkgs = new Set()
+  const map = new Map()
   const walk = tree => {
     for (const node of tree.children) {
-      pkgs.add({
+      map.set(`${node.package.name}@${node.package.version}`, {
         name: node.package.name,
         version: node.package.version
       })
@@ -91,6 +91,9 @@ const readNodeModules = async dir => {
     }
   }
   walk(data)
+
+  const pkgs = new Set()
+  for (const [, pkg] of map) pkgs.add(pkg)
   return pkgs
 }
 
