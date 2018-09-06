@@ -37,31 +37,31 @@ const getPkgs = async dir => {
 }
 
 const filterPkgs = (pkgs, fn) => {
-  const clean = new Set()
+  const map = new Map()
   for (const pkg of pkgs) {
-    if (semver.valid(pkg.version) && fn(pkg)) {
-      clean.add(pkg)
+    const id = `${pkg.name}${pkg.version}`
+    if (semver.valid(pkg.version) && !map.get(id) && fn(pkg)) {
+      map.set(id, pkg)
     }
   }
+
+  const clean = new Set()
+  for (const [, pkg] of map) clean.add(pkg)
   return clean
 }
 
 const readPackageLock = async dir => {
   const buf = await promisify(fs.readFile)(`${dir}/package-lock.json`)
   const packageLock = JSON.parse(buf.toString())
-
-  const map = new Map()
+  const pkgs = new Set()
   const walk = obj => {
     if (!obj.dependencies) return
     for (const [name, value] of Object.entries(obj.dependencies)) {
-      map.set(`${name}@${value.version}`, { name, version: value.version })
+      pkgs.add({ name, version: value.version })
       walk(value)
     }
   }
   walk(packageLock)
-
-  const pkgs = new Set()
-  for (const [, pkg] of map) pkgs.add(pkg)
   return pkgs
 }
 
@@ -80,10 +80,10 @@ const readYarnLock = async dir => {
 
 const readNodeModules = async dir => {
   const data = await promisify(readPackageTree)(dir)
-  const map = new Map()
+  const pkgs = new Set()
   const walk = tree => {
     for (const node of tree.children) {
-      map.set(`${node.package.name}@${node.package.version}`, {
+      pkgs.add({
         name: node.package.name,
         version: node.package.version
       })
@@ -91,9 +91,6 @@ const readNodeModules = async dir => {
     }
   }
   walk(data)
-
-  const pkgs = new Set()
-  for (const [, pkg] of map) pkgs.add(pkg)
   return pkgs
 }
 
