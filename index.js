@@ -13,7 +13,8 @@ const analyze = async ({
   pageSize: pageSize = 50,
   concurrency: concurrency = 5,
   onPkgs: onPkgs = () => {},
-  filter: filter = () => true
+  filter: filter = () => true,
+  url
 }) => {
   const pkgs = filterPkgs(await getPkgs(dir), filter)
   onPkgs(pkgs)
@@ -22,7 +23,7 @@ const analyze = async ({
   const batches = splitSet(pages, concurrency)
   for (const batch of batches) {
     await Promise.all([...batch].map(async page => {
-      for (const datum of await fetchData({ pkgs: page, token })) {
+      for (const datum of await fetchData({ pkgs: page, token, url })) {
         data.add(datum)
       }
     }))
@@ -94,7 +95,7 @@ const readNodeModules = async dir => {
   return pkgs
 }
 
-const fetchData = async ({ pkgs, token }) => {
+const fetchData = async ({ pkgs, token, url }) => {
   const query = `{
     ${[...pkgs].map((pkg, i) => `
       pkg${i}: package(name: "${pkg.name}") {
@@ -121,7 +122,7 @@ const fetchData = async ({ pkgs, token }) => {
       }
     `).join('\n')}
   }`
-  const res = await graphql({ token }, query)
+  const res = await graphql({ token, url }, query)
   const data = new Set()
   for (const pkg of Object.values(res)) {
     const datum = pkg.versions[0]

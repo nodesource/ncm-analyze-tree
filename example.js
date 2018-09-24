@@ -3,6 +3,11 @@
 const analyze = require('.')
 const fetch = require('node-fetch')
 
+const prefix = process.env.NS_ENV
+  ? `${process.env.NS_ENV}.`
+  : ''
+const url = `https://${prefix}api.nodesource.com/ncm2/api/v1`
+
 const dir = process.argv[2] || __dirname
 const type = process.argv[3]
 const fn = type
@@ -10,16 +15,20 @@ const fn = type
   : analyze
 
 const main = async () => {
-  const res = await fetch('https://api.nodesource.com/accounts/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({
-      email: 'julian.gruber+ncm-integration-test@nodesource.com',
-      password: 'NCM-integration-test1'
-    })
-  })
+  const res = await fetch(
+    `https://${prefix}api.nodesource.com/accounts/auth/login`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        email: 'julian.gruber+ncm-integration-test@nodesource.com',
+        password: 'NCM-integration-test1'
+      })
+    }
+  )
   const token = res.headers.get('authorization').split(' ')[1]
 
   const data = await fn({
+    url,
     dir,
     token,
     onPkgs: pkgs => console.log(`Analyzing ${pkgs.size} modules...`)
