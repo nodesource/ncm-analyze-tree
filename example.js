@@ -36,7 +36,7 @@ const main = async () => {
   })
 
   for (const pkg of data) {
-    console.log(`${pkg.name}@${pkg.version}`)
+    console.log(`${pkg.name}@${pkg.version} ${pkg.requiredBy ? `(required by ${pkg.requiredBy}.join(', '))` : ''}`)
   }
   console.log(`Fetched data for ${data.size} modules.`)
 }

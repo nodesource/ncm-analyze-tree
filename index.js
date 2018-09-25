@@ -16,8 +16,9 @@ const analyze = async ({
   filter: filter = () => true,
   url
 }) => {
-  const pkgs = filterPkgs(await getPkgs(dir), filter)
-  onPkgs(pkgs)
+  const pkgs = await getPkgs(dir)
+  const filteredPkgs = filterPkgs(pkgs, filter)
+  onPkgs(filteredPkgs)
   let data = new Set()
   const pages = splitSet(pkgs, pageSize)
   const batches = splitSet(pages, concurrency)
@@ -31,11 +32,12 @@ const analyze = async ({
   return data
 }
 
-const getPkgs = async dir => {
-  if (await exists(`${dir}/package-lock.json`)) return readPackageLock(dir)
-  if (await exists(`${dir}/yarn.lock`)) return readYarnLock(dir)
-  return readNodeModules(dir)
-}
+const getPkgs = async dir =>
+  await exists(`${dir}/package-lock.json`)
+    ? readPackageLock(dir)
+    : await exists(`${dir}/yarn.lock`)
+      ? readYarnLock(dir)
+      : readNodeModules(dir)
 
 const filterPkgs = (pkgs, fn) => {
   const map = new Map()
@@ -51,9 +53,24 @@ const filterPkgs = (pkgs, fn) => {
   return clean
 }
 
+const readJSON = async file => {
+  const buf = await promisify(fs.readFile)(file)
+  return JSON.parse(buf.toString())
+}
+
+const getTopLevelDependencies = async dir => {
+  const packageJSON = await readJSON(`${dir}/package.json`)
+  const topLevelDependencies = new Set()
+  for (const key of ['dependencies', 'devDependencies']) {
+    for (const [name, semver] of Object.entries(packageJSON[key])) {
+      topLevelDependencies.add({ name, semver })
+    }
+  }
+  return topLevelDependencies
+}
+
 const readPackageLock = async dir => {
-  const buf = await promisify(fs.readFile)(`${dir}/package-lock.json`)
-  const packageLock = JSON.parse(buf.toString())
+  const packageLock = await readJSON(`${dir}/package-lock.json`)
   const pkgs = new Set()
   const walk = obj => {
     if (!obj.dependencies) return
