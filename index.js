@@ -100,6 +100,7 @@ const fetchData = async ({ pkgs, token, url }) => {
     ${[...pkgs].map((pkg, i) => `
       pkg${i}: package(name: "${pkg.name}") {
         name
+        published
         versions(version: "${pkg.version}") {
           version
           score
@@ -127,6 +128,7 @@ const fetchData = async ({ pkgs, token, url }) => {
   for (const pkg of Object.values(res)) {
     const datum = pkg.versions[0]
     datum.name = pkg.name
+    datum.published = pkg.published
     for (const result of datum.results) {
       result.value = JSON.parse(result.value)
     }
