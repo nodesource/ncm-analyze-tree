@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@ns-private/graphql": "^4.0.0",
+    "@ns-private/universal-module-tree": "0.0.1",
     "@yarnpkg/lockfile": "^1.0.2",
     "read-package-tree": "^5.2.1",
     "semver": "^5.5.1"
