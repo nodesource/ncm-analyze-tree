@@ -71,7 +71,7 @@ const readPackageLock = async dir => {
       pkgs.set(id(node), pkgObj)
     }
 
-    if (top && !pkgObj.top.has(id(top))) {
+    if (top && top.data.name !== node.data.name && !pkgObj.top.has(id(top))) {
       pkgObj.top.set(id(top), {
         name: top.data.name,
         version: top.data.version
