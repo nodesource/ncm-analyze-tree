@@ -15,40 +15,44 @@ Print certification data for this module's dependency tree:
 ```js
 const analyze = require('@ns-private/ncm-analyze-tree')
 
-const data = await analyze({
+const data = await fn({
   dir: __dirname,
-  token: 'accounts token'
+  token: 'accounts token',
+  onPkgs: pkgs => console.log(`Analyzing ${pkgs.size} modules...`)
 })
-console.log(data)
+
+for (const pkg of data) {
+  console.log(`${pkg.name}@${pkg.version} ${pkg.top.length ? `(required by ${pkg.top.map(top => `${top.name}@${top.version}`).join(', ')})` : ''}`)
+}
 ```
 
 ```bash
 $ node example.js | head -n25
-Set {
-  { version: '2.1.0',
-  score: 100,
-  results:
-   [ [Object], [Object], [Object], [Object], [Object], [Object] ],
-  vulnerabilities: [],
-  name: 'doctrine' },
-  { version: '1.3.2',
-  score: 100,
-  results:
-   [ [Object], [Object], [Object], [Object], [Object], [Object] ],
-  vulnerabilities: [],
-  name: 'error-ex' },
-  { version: '1.12.0',
-  score: 100,
-  results:
-   [ [Object], [Object], [Object], [Object], [Object], [Object] ],
-  vulnerabilities: [],
-  name: 'es-abstract' },
-  { version: '1.1.1',
-  score: 100,
-  results:
-   [ [Object], [Object], [Object], [Object], [Object], [Object] ],
-  vulnerabilities: [],
-  name: 'es-to-primitive' },
+Analyzing 331 modules...
+is-relative@1.0.0 (required by @ns-private/check-deps@2.0.0)
+is-unc-path@1.0.0 (required by @ns-private/check-deps@2.0.0)
+unc-path-regex@0.1.2 (required by @ns-private/check-deps@2.0.0)
+resolve@1.8.1 (required by @ns-private/check-deps@2.0.0, standard@11.0.1)
+path-parse@1.0.6 (required by @ns-private/check-deps@2.0.0)
+npm-run-path@2.0.2 (required by @ns-private/check-deps@2.0.0)
+path-key@2.0.1 (required by @ns-private/check-deps@2.0.0)
+node-fetch@2.2.0
+standard@11.0.1
+eslint@4.18.2 (required by standard@11.0.1)
+ajv@5.5.2 (required by standard@11.0.1)
+co@4.6.0 (required by standard@11.0.1)
+fast-deep-equal@1.1.0 (required by standard@11.0.1)
+fast-json-stable-stringify@2.0.0 (required by standard@11.0.1)
+json-schema-traverse@0.3.1 (required by standard@11.0.1)
+babel-code-frame@6.26.0 (required by standard@11.0.1)
+chalk@1.1.3 (required by standard@11.0.1)
+ansi-styles@2.2.1 (required by standard@11.0.1)
+escape-string-regexp@1.0.5 (required by standard@11.0.1)
+has-ansi@2.0.0 (required by standard@11.0.1)
+ansi-regex@2.1.1 (required by standard@11.0.1)
+strip-ansi@3.0.1 (required by standard@11.0.1)
+supports-color@2.0.0 (required by standard@11.0.1)
+esutils@2.0.2 (required by standard@11.0.1)
 ```
 
 The returned data is of this format:
@@ -58,6 +62,7 @@ The returned data is of this format:
   name
   version
   score
+  top
   results {
     severity
     pass

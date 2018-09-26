@@ -6,6 +6,7 @@ const { promisify } = require('util')
 const readPackageTree = require('read-package-tree')
 const lockfile = require('@yarnpkg/lockfile')
 const semver = require('semver')
+const universalModuleTree = require('@ns-private/universal-module-tree')
 
 const analyze = async ({
   dir,
@@ -51,19 +52,45 @@ const filterPkgs = (pkgs, fn) => {
   return clean
 }
 
+const id = node => `${node.data.name}@${node.data.version}`
+
 const readPackageLock = async dir => {
-  const buf = await promisify(fs.readFile)(`${dir}/package-lock.json`)
-  const packageLock = JSON.parse(buf.toString())
-  const pkgs = new Set()
-  const walk = obj => {
-    if (!obj.dependencies) return
-    for (const [name, value] of Object.entries(obj.dependencies)) {
-      pkgs.add({ name, version: value.version })
-      walk(value)
+  const tree = await universalModuleTree(dir)
+  const pkgs = new Map()
+
+  const walk = (node, top) => {
+    let pkgObj
+    if (pkgs.has(id(node))) {
+      pkgObj = pkgs.get(id(node))
+    } else {
+      pkgObj = {
+        name: node.data.name,
+        version: node.data.version,
+        top: {}
+      }
+      pkgs.set(id(node), pkgObj)
+      for (const child of node.children) {
+        walk(child, top)
+      }
+    }
+
+    if (top && top.data.name !== node.data.name && !pkgObj.top[id(top)]) {
+      pkgObj.top[id(top)] = {
+        name: top.data.name,
+        version: top.data.version
+      }
     }
   }
-  walk(packageLock)
-  return pkgs
+
+  for (const child of tree.children) {
+    walk(child, child)
+  }
+
+  const set = new Set()
+  for (const [, pkg] of pkgs) {
+    set.add({ ...pkg, top: Object.values(pkg.top) })
+  }
+  return set
 }
 
 const readYarnLock = async dir => {
@@ -125,10 +152,13 @@ const fetchData = async ({ pkgs, token, url }) => {
   }`
   const res = await graphql({ token, url }, query)
   const data = new Set()
-  for (const pkg of Object.values(res)) {
+  const values = Object.values(res)
+  for (let i = 0; i < values.length; i++) {
+    const pkg = values[i]
     const datum = pkg.versions[0]
     datum.name = pkg.name
     datum.published = pkg.published
+    datum.top = [...pkgs][i].top
     for (const result of datum.results) {
       result.value = JSON.parse(result.value)
     }
