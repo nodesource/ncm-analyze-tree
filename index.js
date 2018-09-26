@@ -66,7 +66,7 @@ const readPackageLock = async dir => {
       pkgObj = {
         name: node.data.name,
         version: node.data.version,
-        top: new Map()
+        top: {}
       }
       pkgs.set(id(node), pkgObj)
       for (const child of node.children) {
@@ -74,11 +74,11 @@ const readPackageLock = async dir => {
       }
     }
 
-    if (top && top.data.name !== node.data.name && !pkgObj.top.has(id(top))) {
-      pkgObj.top.set(id(top), {
+    if (top && top.data.name !== node.data.name && !pkgObj.top[id(top)]) {
+      pkgObj.top[id(top)] = {
         name: top.data.name,
         version: top.data.version
-      })
+      }
     }
   }
 
@@ -87,22 +87,8 @@ const readPackageLock = async dir => {
   }
 
   const set = new Set()
-  for (const [, pkg] of pkgs) {
-    set.add({
-      ...pkg,
-      top: valuesOfMapToArray(pkg.top)
-    })
-  }
-
+  for (const [, pkg] of pkgs) set.add(pkg)
   return set
-}
-
-const valuesOfMapToArray = map => {
-  const ret = []
-  for (const [, value] of map) {
-    ret.push(value)
-  }
-  return ret
 }
 
 const readYarnLock = async dir => {
