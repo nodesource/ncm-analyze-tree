@@ -69,6 +69,9 @@ const readPackageLock = async dir => {
         top: new Map()
       }
       pkgs.set(id(node), pkgObj)
+      for (const child of node.children) {
+        walk(child, top)
+      }
     }
 
     if (top && top.data.name !== node.data.name && !pkgObj.top.has(id(top))) {
@@ -76,12 +79,6 @@ const readPackageLock = async dir => {
         name: top.data.name,
         version: top.data.version
       })
-    }
-
-    if (node.children.length) {
-      for (const child of node.children) {
-        walk(child, top)
-      }
     }
   }
 
