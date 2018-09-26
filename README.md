@@ -63,6 +63,7 @@ The returned data is of this format:
   version
   score
   top
+  published
   results {
     severity
     pass
