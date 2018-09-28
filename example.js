@@ -36,7 +36,10 @@ const main = async () => {
   })
 
   for (const pkg of data) {
-    console.log(`${pkg.name}@${pkg.version} ${pkg.top.length ? `(required by ${pkg.top.map(top => `${top.name}@${top.version}`).join(', ')})` : ''}`)
+    console.log(`${pkg.name}@${pkg.version}`)
+    for (const path of pkg.paths) {
+      console.log(`  ${path.map(pkg => `${pkg.data.name}@${pkg.data.version}`).join(' > ')}`)
+    }
   }
   console.log(`Fetched data for ${data.size} modules.`)
 }

@@ -58,38 +58,30 @@ const readPackageLock = async dir => {
   const tree = await universalModuleTree(dir)
   const pkgs = new Map()
 
-  const walk = (node, top) => {
+  const walk = (node, path) => {
     let pkgObj
     if (pkgs.has(id(node))) {
       pkgObj = pkgs.get(id(node))
+      pkgObj.paths.push(path)
     } else {
       pkgObj = {
         name: node.data.name,
         version: node.data.version,
-        top: {}
+        paths: [path]
       }
       pkgs.set(id(node), pkgObj)
       for (const child of node.children) {
-        walk(child, top)
-      }
-    }
-
-    if (top && top.data.name !== node.data.name && !pkgObj.top[id(top)]) {
-      pkgObj.top[id(top)] = {
-        name: top.data.name,
-        version: top.data.version
+        walk(child, [...path, node])
       }
     }
   }
 
   for (const child of tree.children) {
-    walk(child, child)
+    walk(child, [])
   }
 
   const set = new Set()
-  for (const [, pkg] of pkgs) {
-    set.add({ ...pkg, top: Object.values(pkg.top) })
-  }
+  for (const [, pkg] of pkgs) set.add(pkg)
   return set
 }
 
@@ -158,7 +150,7 @@ const fetchData = async ({ pkgs, token, url }) => {
     const datum = pkg.versions[0]
     datum.name = pkg.name
     datum.published = pkg.published
-    datum.top = [...pkgs][i].top
+    datum.paths = [...pkgs][i].paths
     for (const result of datum.results) {
       result.value = JSON.parse(result.value)
     }
