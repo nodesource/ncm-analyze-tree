@@ -17,7 +17,7 @@ const analyze = async ({
   filter: filter = () => true,
   url
 }) => {
-  const pkgs = filterPkgs(await getPkgs(dir), filter)
+  const pkgs = filterPkgs(await readUniversalTree(dir), filter)
   onPkgs(pkgs)
   let data = new Set()
   const pages = splitSet(pkgs, pageSize)
@@ -31,14 +31,6 @@ const analyze = async ({
   }
   return data
 }
-
-const getPkgs = async dir =>
-  (
-    await exists(`${dir}/package-lock.json`) ||
-    await exists(`${dir}/yarn.lock`)
-  )
-    ? readUniversalTree(dir)
-    : readNodeModules(dir)
 
 const filterPkgs = (pkgs, fn) => {
   const map = new Map()
@@ -85,22 +77,6 @@ const readUniversalTree = async dir => {
   const set = new Set()
   for (const [, pkg] of pkgs) set.add(pkg)
   return set
-}
-
-const readNodeModules = async dir => {
-  const data = await promisify(readPackageTree)(dir)
-  const pkgs = new Set()
-  const walk = tree => {
-    for (const node of tree.children) {
-      pkgs.add({
-        name: node.package.name,
-        version: node.package.version
-      })
-      walk(node)
-    }
-  }
-  walk(data)
-  return pkgs
 }
 
 const fetchData = async ({ pkgs, token, url }) => {
