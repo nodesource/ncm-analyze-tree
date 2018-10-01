@@ -32,11 +32,13 @@ const analyze = async ({
   return data
 }
 
-const getPkgs = async dir => {
-  if (await exists(`${dir}/package-lock.json`)) return readPackageLock(dir)
-  if (await exists(`${dir}/yarn.lock`)) return readYarnLock(dir)
-  return readNodeModules(dir)
-}
+const getPkgs = async dir =>
+  (
+    await exists(`${dir}/package-lock.json`) ||
+    await exists(`${dir}/yarn.lock`)
+  )
+    ? readUniversalTree(dir)
+    : readNodeModules(dir)
 
 const filterPkgs = (pkgs, fn) => {
   const map = new Map()
@@ -54,7 +56,7 @@ const filterPkgs = (pkgs, fn) => {
 
 const id = node => `${node.data.name}@${node.data.version}`
 
-const readPackageLock = async dir => {
+const readUniversalTree = async dir => {
   const tree = await universalModuleTree(dir)
   const pkgs = new Map()
 
@@ -83,19 +85,6 @@ const readPackageLock = async dir => {
   const set = new Set()
   for (const [, pkg] of pkgs) set.add(pkg)
   return set
-}
-
-const readYarnLock = async dir => {
-  const buf = await promisify(fs.readFile)(`${dir}/yarn.lock`)
-  const yarnLock = lockfile.parse(buf.toString())
-  const pkgs = new Set()
-  for (const [pkgId, obj] of Object.entries(yarnLock.object)) {
-    pkgs.add({
-      name: /(.+)@/.exec(pkgId)[1],
-      version: obj.version
-    })
-  }
-  return pkgs
 }
 
 const readNodeModules = async dir => {
