@@ -1,10 +1,6 @@
 'use strict'
 
 const graphql = require('@ns-private/graphql')
-const fs = require('fs')
-const { promisify } = require('util')
-const readPackageTree = require('read-package-tree')
-const lockfile = require('@yarnpkg/lockfile')
 const semver = require('semver')
 const universalModuleTree = require('@ns-private/universal-module-tree')
 
@@ -138,15 +134,6 @@ const splitSet = (set, n) => {
   }
   if (bucket) buckets.add(bucket)
   return buckets
-}
-
-const exists = async path => {
-  try {
-    await promisify(fs.stat)(path)
-    return true
-  } catch (_) {
-    return false
-  }
 }
 
 module.exports = analyze
