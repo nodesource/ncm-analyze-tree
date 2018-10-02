@@ -67,6 +67,7 @@ The returned data is of this format:
   score
   paths[]
   published
+  publishedAt
   results {
     severity
     pass

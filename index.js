@@ -88,6 +88,7 @@ const fetchData = async ({ pkgs, token, url }) => {
         versions(version: "${pkg.version}") {
           version
           score
+          publishedAt
           results {
             severity
             pass
