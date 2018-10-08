@@ -2,7 +2,7 @@
 
 const graphql = require('./lib/graphql')
 const semver = require('semver')
-const universalModuleTree = require('@ns-private/universal-module-tree')
+const universalModuleTree = require('universal-module-tree')
 
 const analyze = async ({
   dir,

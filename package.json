@@ -13,8 +13,8 @@
     "standard": "^11.0.1"
   },
   "dependencies": {
-    "@ns-private/universal-module-tree": "^1.2.1",
     "graphql-request": "^1.8.2",
-    "semver": "^5.5.1"
+    "semver": "^5.5.1",
+    "universal-module-tree": "^2.0.0"
   }
 }
