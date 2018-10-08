@@ -104,4 +104,4 @@ analysis
 
 Copyright &copy; NodeSource.
 
-Licensed under the MIT open source licefnse, see the LICENSE file for details.
+Licensed under the MIT open source license, see the LICENSE file for details.
