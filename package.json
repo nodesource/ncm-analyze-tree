@@ -1,0 +1,20 @@
+{
+  "name": "ncm-analyze-tree",
+  "version": "2.3.0",
+  "license": "MIT",
+  "repository": "nodesource/ncm-analyze-tree",
+  "description": "Get certification data for a module's dependency tree",
+  "scripts": {
+    "test": "standard && npm run test:deps && node example.js",
+    "test:deps": "dependency-check . --quiet && dependency-check . --quiet --unused --no-dev"
+  },
+  "devDependencies": {
+    "dependency-check": "^3.2.1",
+    "standard": "^11.0.1"
+  },
+  "dependencies": {
+    "@ns-private/universal-module-tree": "^1.2.1",
+    "graphql-request": "^1.8.2",
+    "semver": "^5.5.1"
+  }
+}
