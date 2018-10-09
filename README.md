@@ -94,6 +94,8 @@ $ npm install ncm-analyze-tree
 
 ### analyze({ dir, token, onPkgs, filter, url })
 
+- `dir`: The node project's directory
+- `token`: accounts token
 - `onPkgs`: Called with a `Set` of package objects `{ name, version }`, once the
 tree has been read
 - `filter`: Called with every `pkg` object, return `false` to remove from
