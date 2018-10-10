@@ -1,5 +1,7 @@
 # ncm-analyze-tree
 
+[![Build Status](https://travis-ci.org/nodesource/ncm-analyze-tree.svg?branch=master)](https://travis-ci.org/nodesource/ncm-analyze-tree)
+
 Get certification data for a module's dependency tree, as it is on disk.
 
 This process is optimized by trying to get all the necessary information from
