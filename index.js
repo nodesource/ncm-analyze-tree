@@ -42,37 +42,10 @@ const filterPkgs = (pkgs, fn) => {
   return clean
 }
 
-const id = node => `${node.data.name}@${node.data.version}`
-
 const readUniversalTree = async dir => {
   const tree = await universalModuleTree(dir)
-  const pkgs = new Map()
-
-  const walk = (node, path) => {
-    let pkgObj
-    if (pkgs.has(id(node))) {
-      pkgObj = pkgs.get(id(node))
-      pkgObj.paths.push(path)
-    } else {
-      pkgObj = {
-        name: node.data.name,
-        version: node.data.version,
-        paths: [path]
-      }
-      pkgs.set(id(node), pkgObj)
-      for (const child of node.children) {
-        walk(child, [...path, node])
-      }
-    }
-  }
-
-  for (const child of tree.children) {
-    walk(child, [])
-  }
-
-  const set = new Set()
-  for (const [, pkg] of pkgs) set.add(pkg)
-  return set
+  const list = universalModuleTree.flatten(tree)
+  return new Set(list)
 }
 
 const fetchData = async ({ pkgs, token, url }) => {
