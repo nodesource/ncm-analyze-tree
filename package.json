@@ -1,6 +1,6 @@
 {
   "name": "ncm-analyze-tree",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "license": "MIT",
   "repository": "nodesource/ncm-analyze-tree",
   "description": "Get certification data for a module's dependency tree",
