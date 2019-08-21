@@ -6,6 +6,7 @@ const universalModuleTree = require('universal-module-tree')
 
 const analyze = async ({
   dir,
+  tree,
   token,
   pageSize: pageSize = 50,
   concurrency: concurrency = 5,
@@ -13,7 +14,8 @@ const analyze = async ({
   filter: filter = () => true,
   url
 }) => {
-  const pkgs = filterPkgs(await readUniversalTree(dir), filter)
+  if (!tree) tree = await readUniversalTree(dir)
+  const pkgs = filterPkgs(tree, filter)
   onPkgs(pkgs)
   let data = new Set()
   const pages = splitSet(pkgs, pageSize)
