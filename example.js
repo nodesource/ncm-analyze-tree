@@ -5,7 +5,7 @@ const analyze = require('.')
 const prefix = process.env.NS_ENV
   ? `${process.env.NS_ENV}.`
   : ''
-const url = `https://${prefix}api.nodesource.com/ncm2/api/v1`
+const url = `https://${prefix}api.nodesource.com/ncm2/api/v2/graphql`
 
 const dir = process.argv[2] || __dirname
 const token = process.env.NCM_TOKEN

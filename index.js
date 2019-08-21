@@ -49,46 +49,33 @@ const readUniversalTree = async dir => {
 }
 
 const fetchData = async ({ pkgs, token, url }) => {
-  const query = `{
-    ${[...pkgs].map((pkg, i) => `
-      pkg${i}: package(name: "${pkg.name}") {
+  const query = `
+    query getPackageVersions($packageVersions: [PackageVersionInput!]!) {
+      packageVersions(packageVersions: $packageVersions) {
         name
+        version
         published
-        versions(version: "${pkg.version}") {
-          version
-          score
-          publishedAt
-          results {
-            severity
-            pass
-            name
-            test
-            value
-          }
-          vulnerabilities {
-            id,
-            title,
-            semver {
-              vulnerable
-            },
-            severity
-          }
+        publishedAt
+        scores {
+          group
+          name
+          pass
+          severity
+          title
+          data
         }
       }
-    `).join('\n')}
-  }`
-  const res = await graphql({ token, url }, query)
-  const data = new Set()
-  const values = Object.values(res)
-  for (let i = 0; i < values.length; i++) {
-    const pkg = values[i]
-    const datum = pkg.versions[0]
-    datum.name = pkg.name
-    datum.published = pkg.published
-    datum.paths = [...pkgs][i].paths
-    for (const result of datum.results) {
-      result.value = JSON.parse(result.value)
     }
+  `
+
+  const variables = {
+    packageVersions: [...pkgs].map(({ name, version }) => ({ name, version }))
+  }
+
+  const res = await graphql({ token, url }, query, variables)
+  const data = new Set()
+  for (const [i, datum] of Object.entries(res.packageVersions)) {
+    datum.paths = [...pkgs][i].paths
     data.add(datum)
   }
   return data
