@@ -8,14 +8,10 @@ const prefix = process.env.NS_ENV
 const url = `https://${prefix}api.nodesource.com/ncm2/api/v1`
 
 const dir = process.argv[2] || __dirname
-const type = process.argv[3]
 const token = process.env.NCM_TOKEN
-const fn = type
-  ? analyze[type]
-  : analyze
 
 const main = async () => {
-  const data = await fn({
+  const data = await analyze({
     url,
     dir,
     token,
