@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "dependency-check": "^3.2.1",
-    "standard": "^11.0.1"
+    "standard": "^17.1.2"
   },
   "dependencies": {
     "graphql-request": "^1.8.2",
