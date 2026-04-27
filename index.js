@@ -8,16 +8,16 @@ const analyze = async ({
   dir,
   tree,
   token,
-  pageSize: pageSize = 50,
-  concurrency: concurrency = 5,
-  onPkgs: onPkgs = () => {},
-  filter: filter = () => true,
+  pageSize = 50,
+  concurrency = 5,
+  onPkgs = () => {},
+  filter = () => true,
   url
 }) => {
   if (!tree) tree = await readUniversalTree(dir)
   const pkgs = filterPkgs(tree, filter)
   onPkgs(pkgs)
-  let data = new Set()
+  const data = new Set()
   const pages = splitSet(pkgs, pageSize)
   const batches = splitSet(pages, concurrency)
   for (const batch of batches) {
