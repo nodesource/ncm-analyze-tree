@@ -6,15 +6,15 @@
   "description": "Get certification data for a module's dependency tree",
   "scripts": {
     "test": "standard && npm run test:deps && node example.js",
-    "test:deps": "dependency-check . --quiet && dependency-check . --quiet --unused --no-dev"
+    "test:deps": "dependency-check . --missing && dependency-check . --unused --no-dev"
   },
   "devDependencies": {
-    "dependency-check": "^3.2.1",
-    "standard": "^11.0.1"
+    "dependency-check": "^4.1.0",
+    "standard": "^17.1.2"
   },
   "dependencies": {
-    "graphql-request": "^1.8.2",
-    "semver": "^5.5.1",
+    "graphql-request": "^3.7.0",
+    "semver": "^5.7.2",
     "universal-module-tree": "^2.2.0"
   }
 }
